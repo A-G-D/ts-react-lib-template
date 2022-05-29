@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+component_name=$(basename "$1")
+dir_name=./src/$component_name/$(dirname "$1")
+normalized_file_name=${component_name//-/_}
+normalized_component_name=$(echo $component_name | sed -r 's/(^|-|_)([a-z])/\U\2/g')
+
+mkdir -p $dir_name
+
+cat > $dir_name/$normalized_file_name.scss << EOF
+.$normalized_component_name {
+}
+EOF
+
+cat > $dir_name/$normalized_file_name.tsx << EOF
+import React, { useRef, useEffect, useState, HTMLProps } from 'react'
+import PropTypes from 'prop-types'
+
+import './$normalized_file_name.scss'
+
+export interface ${normalized_component_name}Props extends HTMLProps<HTMLDivElement> {
+  className?: string
+}
+
+export const $normalized_component_name = ({
+  children,
+  className,
+  ...props
+}: ${normalized_component_name}Props): JSX.Element => {
+  return (
+    <div
+      className={['$normalized_component_name', className].join(' ').replace(/ +$/, '')}
+      {...props}
+    >
+      {children}
+    </div>
+  )
+}
+
+$normalized_component_name.displayName = '$normalized_component_name'
+$normalized_component_name.propTypes = {
+  children: PropTypes.node,
+  className: PropTypes.string
+}
+EOF
+
+cat > $dir_name/$normalized_file_name.stories.tsx << EOF
+import React from 'react'
+import { ComponentStory, ComponentMeta } from '@storybook/react'
+
+import { $normalized_component_name, ${normalized_component_name}Props } from './$normalized_file_name'
+
+type Meta = ComponentMeta<typeof $normalized_component_name>
+type Story = ComponentStory<typeof $normalized_component_name>
+
+export default {
+  title: '$normalized_component_name',
+  component: $normalized_component_name
+} as Meta
+
+const Template: Story = (args: ) => (
+  <$normalized_component_name {...args} />
+)
+
+export const Default = Template.bind({})
+Default.args = {}
+EOF
+
+cat > $dir_name/$normalized_file_name.test.tsx << EOF
+import React from 'react'
+import { render } from '@testing-library/react'
+import '@testing-library/jest-dom'
+
+import { $normalized_component_name } from './$normalized_file_name'
+
+describe("Running test for '$normalized_component_name'", () => {
+  // Tests goes here
+})
+EOF

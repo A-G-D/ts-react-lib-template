@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+prev=src/$1
+curr=src/$2
+
+prev_component_name=$(basename "$prev")
+prev_dir_name=$(dirname "$prev")
+prev_normalized_file_name=${prev_component_name//-/_}
+prev_normalized_component_name=$(echo $prev_component_name | sed -r 's/(^|-|_)([a-z])/\U\2/g')
+
+curr_component_name=$(basename "$curr")
+curr_dir_name=$(dirname "$curr")
+curr_normalized_file_name=${curr_component_name//-/_}
+curr_normalized_component_name=$(echo $curr_component_name | sed -r 's/(^|-|_)([a-z])/\U\2/g')
+
+replacement_regex="s/$prev_dir_name\/\\$prev_normalized_file_name/$curr_dir_name\/\\$curr_normalized_file_name/g"
+replacement_regex="$replacement_regex; s/\\$prev_component_name/\\$curr_component_name/g"
+replacement_regex="$replacement_regex; s/\\$prev_normalized_file_name/\\$curr_normalized_file_name/g"
+replacement_regex="$replacement_regex; s/\\$prev_normalized_component_name/\\$curr_normalized_component_name/g"
+
+echo "$replacement_regex"
+renameTokens() {
+  if [[ -f "$1" ]]; then
+    sed "$replacement_regex" "$1" > "$2"
+  fi
+}
+
+if [[ -d "$prev" ]]; then
+  mkdir -p "$curr"
+  renameTokens "$prev/$prev_normalized_file_name.js" "$curr/$curr_normalized_file_name.js"
+  renameTokens "$prev/$prev_normalized_file_name.jsx" "$curr/$curr_normalized_file_name.jsx"
+  renameTokens "$prev/$prev_normalized_file_name.ts" "$curr/$curr_normalized_file_name.ts"
+  renameTokens "$prev/$prev_normalized_file_name.tsx" "$curr/$curr_normalized_file_name.tsx"
+  renameTokens "$prev/$prev_normalized_file_name.css" "$curr/$curr_normalized_file_name.css"
+  renameTokens "$prev/$prev_normalized_file_name.sass" "$curr/$curr_normalized_file_name.sass"
+  renameTokens "$prev/$prev_normalized_file_name.scss" "$curr/$curr_normalized_file_name.scss"
+  renameTokens "$prev/$prev_normalized_file_name.less" "$curr/$curr_normalized_file_name.less"
+  renameTokens "$prev/$prev_normalized_file_name.stories.mdx" "$curr/$curr_normalized_file_name.stories.mdx"
+  renameTokens "$prev/$prev_normalized_file_name.stories.js" "$curr/$curr_normalized_file_name.stories.js"
+  renameTokens "$prev/$prev_normalized_file_name.stories.jsx" "$curr/$curr_normalized_file_name.stories.jsx"
+  renameTokens "$prev/$prev_normalized_file_name.stories.ts" "$curr/$curr_normalized_file_name.stories.ts"
+  renameTokens "$prev/$prev_normalized_file_name.stories.tsx" "$curr/$curr_normalized_file_name.stories.tsx"
+  rename "s/$prev/$prev.old/" "$prev"
+fi

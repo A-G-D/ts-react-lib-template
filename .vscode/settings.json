@@ -1,0 +1,9 @@
+{
+  "eslint.options": {
+    "overrideConfig": {
+      "parserOptions": {
+        "createDefaultProgram": true
+      }
+    }
+  }
+}
