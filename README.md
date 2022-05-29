@@ -1,4 +1,4 @@
-# React Component Library Template (TypeScript)
+# React Component Library Template
 
 A ready to use template for creating your own component library for React, with support for TypeScript, Jest, Storybook, TailwindCSS, and various CSS precompilers. It also comes with built-in code linting and formatting, so you can focus on writing your code logic instead of worrying how your code looks.
 
